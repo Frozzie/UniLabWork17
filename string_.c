@@ -76,3 +76,4 @@ char* findSpace (char *begin)
     
     return sym;
 }
+
