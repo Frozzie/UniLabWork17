@@ -77,3 +77,85 @@ char* findSpace (char *begin)
     return sym;
 }
 
+char* findNonSpaceReverse(char *rbegin, const char *rend)
+{
+    char *sym = rbegin;
+
+    while(*sym > *rend)
+    {
+        if (!isSpace (*sym))
+        {
+            break;
+        }
+        sym--;
+    }
+    
+    return sym;
+}
+
+char* findSpaceReverse(char *rbegin, const char *rend)
+{
+    char *sym = rbegin;
+
+    while(*sym > *rend)
+    {
+        if (isSpace (*sym))
+        {
+            break;
+        }
+        sym--;
+    }
+    
+    return sym;
+}
+
+int strcmp(const char *lhs, const char *rhs)
+{
+    while(*lhs > 0 && *rhs > 0)
+    {
+        if(*lhs != *rhs)
+        {
+            break;
+        }
+        lhs++;
+        rhs++;
+    }
+
+    return (int)(*lhs - *rhs);
+}
+
+char* copy(char *beginSource, const char *endSource, char *beginDestination)
+{
+    while(beginSource < endSource)
+    {
+        *beginDestination++ = *beginSource++;
+    }
+
+    return beginSource;
+}
+
+char* copyIf(char *beginSource, const char *endSource, char *beginDestination, int (*f)(int))
+{
+    while(beginSource < endSource)
+    {
+        if(f)
+        {
+            *beginDestination++ = *beginSource++;
+        }
+    }
+
+    return beginSource;
+}
+
+char* copyIfReverse(char *rbeginSource, const char *rendSource, char *beginDestination, int (*f)(int))
+{
+    while(rbeginSource < rendSource)
+    {
+        if(f)
+        {
+            *beginDestination++ = *rbeginSource--;
+        }
+    }
+
+    return rbeginSource;
+}
