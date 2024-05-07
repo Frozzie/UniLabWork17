@@ -2,14 +2,42 @@
 #include <math.h>
 #include <stdbool.h>
 
-size_t  strlen1             (char *s);
-char*   find                (char *begin, char *end, int ch);
-bool    isSpace             (char sym);
-char*   findNonSpace        (char *begin);
-char*   findSpace           (char *begin);
-char*   findNonSpaceReverse (char *rbegin, const char *rend);
-char*   findSpaceReverse    (char *rbegin, const char *rend);
-int     strcmp              (const char *lhs, const char *rhs);
-char*   copy                (char *beginSource, const char *endSource, char *beginDestination);
-char*   copyIf              (char *beginSource, const char *endSource, char *beginDestination, int (*f)(int));
-char*   copyIfReverse       (char *rbeginSource, const char *rendSource, char *beginDestination, int (*f)(int));
+#define MAX_N_WORDS_IN_STRING   20
+typedef struct WordDescriptor 
+{
+    char *begin; // позиция начала слова
+    char *end; // позиция первого символа, после последнего символа
+} WordDescriptor;
+
+typedef struct BagOfWords 
+{
+    WordDescriptor words[MAX_N_WORDS_IN_STRING];
+    size_t size;
+} BagOfWords;
+
+size_t  strlen1                 (char *s);
+char*   find                    (char *begin, char *end, int ch);
+bool    isSpace                 (char sym);
+char*   findNonSpace            (char *begin);
+char*   findSpace               (char *begin);
+char*   findNonSpaceReverse     (char *rbegin, const char *rend);
+char*   findSpaceReverse        (char *rbegin, const char *rend);
+int     strcmp                  (const char *lhs, const char *rhs);
+char*   copy                    (char *beginSource, const char *endSource, char *beginDestination);
+char*   copyIf                  (char *beginSource, const char *endSource, char *beginDestination, bool (*f)(int));
+char*   copyIfReverse           (char *rbeginSource, const char *rendSource, char *beginDestination, bool (*f)(int));
+void    removeNonLetters        (char *s);
+void    removeExtraSpaces       (char *s);
+int     getWord                 (char *beginSearch, WordDescriptor *word);
+int     getWordReverse          (char *rbegin, char *rend, WordDescriptor *word);
+bool    isNum                   (char *sym);
+void    addNumOfSpaces          (char *s);
+void    replace                 (char *source, char *w1, char *w2);
+int     WordsCmp                (WordDescriptor w1, WordDescriptor w2);
+bool    isAlphabeticalOrder     (char *str);
+void    getBagOfWords           (BagOfWords *bag, char *s);
+void    printWord               (WordDescriptor w);
+void    PrintWordsBackwards     (char *str);
+bool    isWordPalindrome        (WordDescriptor word);
+int     wordsPalindrome         (char *str);
+char   *alternatingStringWords  (char *s1, char *s2);
