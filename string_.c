@@ -46,6 +46,26 @@ bool isSpace(char sym)
     return answ;
 }
 
+bool isNonSpace(int sym)
+{
+    bool answ = false;
+
+    if(sym <= '0' && sym >= '9')
+    {
+        answ = true;
+    }
+    else if(sym <= 'A' && sym >= 'Z')
+    {
+        answ = true;
+    }
+    else if(sym <= 'a' && sym >= 'z')
+    {
+        answ = true;
+    }
+
+    return answ;
+}
+
 char* findNonSpace (char *begin)
 {
     char *sym = begin;
@@ -162,10 +182,30 @@ char* copyIfReverse(char *rbeginSource, const char *rendSource, char *beginDesti
     return rbeginSource;
 }
 
+char *getEndOfString(char *s)
+{
+    char *s1 = s;
+    while(*s1 != 0)
+    {
+        s1++;
+    }
+    return s1;
+}
+
+int strlen(char *s)
+{
+    char *s1 = s;
+    while(*s1 != 0)
+    {
+        s1++;
+    }
+    return (int)s1 - (int)s;
+}
+
 void removeNonLetters(char *s) 
 {
     char *endSource = getEndOfString(s);
-    char *destination = copyIf(s, endSource, s, !isSpace);
+    char *destination = copyIf(s, endSource, s, isNonSpace);
     *destination = '\0';
 }
 
@@ -175,11 +215,11 @@ void removeExtraSpaces(char *s)
     char *destination = s;
     while(s != 0)
     {
-        if(isSpace(s))
+        if(isSpace(*s))
         {
             if(!flag)
             {
-                *destination++ = s++;
+                *destination++ = *s++;
                 flag = true;
             }
             else
@@ -189,7 +229,7 @@ void removeExtraSpaces(char *s)
         }
         else
         {
-            *destination++ = s++;
+            *destination++ = *s++;
             flag = false;
         }
     }
@@ -227,7 +267,7 @@ bool isNum(char *sym)
 {
     bool answ = false;
 
-    if(sym >= '0' && sym <= '9')
+    if(*sym >= '0' && *sym <= '9')
     {
         answ = true;
     }
@@ -250,7 +290,7 @@ void addNumOfSpaces(char *s)
         }
         else
         {
-            *destination++ = s++;
+            *destination++ = *s++;
         }
     }
 
@@ -259,8 +299,8 @@ void addNumOfSpaces(char *s)
 
 void replace(char *source, char *w1, char *w2) 
 {
-    size_t w1Size = strlen_(w1);
-    size_t w2Size = strlen_(w2);
+    size_t w1Size = strlen(w1);
+    size_t w2Size = strlen(w2);
     WordDescriptor word1 = {w1, w1 + w1Size};
     WordDescriptor word2 = {w2, w2 + w2Size};
     char *readPtr, *recPtr, _stringBuffer;
@@ -272,8 +312,8 @@ void replace(char *source, char *w1, char *w2)
     } 
     else 
     {
-        copy(source, getEndOfString(source), _stringBuffer);
-        readPtr = _stringBuffer;
+        copy(source, getEndOfString(source), &_stringBuffer);
+        readPtr = &_stringBuffer;
         recPtr = source;
     }
 }
@@ -437,7 +477,7 @@ char *alternatingStringWords (char *s1, char *s2)
 
 void reverseWordOrder (char *str)
 {
-    char *buff = malloc(strlen(str) + 1), str_end;
+    char *buff = malloc(strlen(str) + 1), *str_end;
     WordDescriptor word;
     str_end = buff + strlen(str);
     
@@ -462,7 +502,7 @@ bool findSymInWord (char s, WordDescriptor word)
     bool flag = false;
     while(word.begin < word.end)
     {
-        if(word.begin == s)
+        if(word.begin == &s)
         {
             flag = true;
             break;
@@ -534,7 +574,7 @@ void findWordInOtherString (char *s1, char *s2)
 
     getBagOfWords(&bag, s2);
 
-    while (getWord(s1Start, &word1) == 1)
+    while (getWord(&s1Start, &word1) == 1)
     {
         for (size_t i = 0; i < bag.size; i++)
         {
@@ -562,7 +602,7 @@ bool FindSameWords (char *s1, char *s2)
 
     getBagOfWords(&bag, s2);
 
-    while (getWord(s1Start, &word1) == 1)
+    while (getWord(&s1Start, &word1) == 1)
     {
         for (size_t i = 0; i < bag.size; i++)
         {
@@ -593,7 +633,7 @@ void getAllUniqueSortedLetters (WordDescriptor *w)
 
         for(int i = 0; i < count; i++)
         {
-            if(wBegin == mem[i])
+            if(wBegin == &mem[i])
             {
                 flag = false;
                 break;
