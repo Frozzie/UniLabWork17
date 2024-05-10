@@ -156,6 +156,16 @@ char* copy(char *beginSource, const char *endSource, char *beginDestination)
     return beginDestination;
 }
 
+char *copyStr (char *dest, char *src)
+{
+    while(*src > 0)
+    {
+        *dest++ = *src++;
+    }
+
+    return dest;
+}
+
 char* copyIf(char *beginSource, const char *endSource, char *beginDestination, bool (*f)(int))
 {
     while(beginSource < endSource)
@@ -190,16 +200,6 @@ char *getEndOfString(char *s)
         s1++;
     }
     return s1;
-}
-
-int strlen(char *s)
-{
-    char *s1 = s;
-    while(*s1 != 0)
-    {
-        s1++;
-    }
-    return (int)s1 - (int)s;
 }
 
 void removeNonLetters(char *s) 
@@ -299,8 +299,8 @@ void addNumOfSpaces(char *s)
 
 void replace(char *source, char *w1, char *w2) 
 {
-    size_t w1Size = strlen(w1);
-    size_t w2Size = strlen(w2);
+    size_t w1Size = strlen1(w1);
+    size_t w2Size = strlen1(w2);
     WordDescriptor word1 = {w1, w1 + w1Size};
     WordDescriptor word2 = {w2, w2 + w2Size};
     char *readPtr, *recPtr, _stringBuffer;
@@ -451,7 +451,7 @@ char *alternatingStringWords (char *s1, char *s2)
     bool isW1Found, isW2Found;
     char *beginSearch1 = s1, *beginSearch2 = s2, *output;
 
-    output = malloc(strlen(s1) + strlen(s2) + 1);
+    output = malloc(strlen1(s1) + strlen1(s2) + 1);
 
     while ((isW1Found = getWord(beginSearch1, &word1)), (isW2Found = getWord(beginSearch2, &word2)), isW1Found || isW2Found) 
     {
@@ -477,9 +477,9 @@ char *alternatingStringWords (char *s1, char *s2)
 
 void reverseWordOrder (char *str)
 {
-    char *buff = malloc(strlen(str) + 1), *str_end;
+    char *buff = malloc(strlen1(str) + 1), *str_end;
     WordDescriptor word;
-    str_end = buff + strlen(str);
+    str_end = buff + strlen1(str);
     
     char *src = str;
     char *dest = buff;
@@ -672,15 +672,15 @@ void sortSymInWord (WordDescriptor a)
     }
 }
 
-bool FindSameLettersInWord (char *s)
+bool FindSameLettersInWords (char *s)
 {
     WordDescriptor word, mem;
     char sStart = *s;
     BagOfWords bag;
     bool flag = true;
 
-    char *s_cpy = malloc(strlen(s) + 1);
-    copy(s, s + strlen(s) + 1, s_cpy);
+    char *s_cpy = malloc(strlen1(s) + 1);
+    copy(s, s + strlen1(s) + 1, s_cpy);
     
     getBagOfWords(&bag, s_cpy);
 
@@ -719,15 +719,15 @@ void getStringFromBag (BagOfWords *w, char *s)
     *s = 0;
 }
 
-//17
+// 15
 void deleteLastWord (char *s)
 {
     WordDescriptor word1, word2;
     char sStart = *s;
     BagOfWords bag, output;
 
-    char *s_cpy = malloc(strlen(s) + 1);
-    copy(s, s + strlen(s) + 1, s_cpy);
+    char *s_cpy = malloc(strlen1(s) + 1);
+    copy(s, s + strlen1(s) + 1, s_cpy);
 
     getBagOfWords(&bag, s_cpy);
 
@@ -744,6 +744,7 @@ void deleteLastWord (char *s)
     free(s_cpy);
 }
 
+// 16
 WordDescriptor findWordBeforeFirstFoundWord (char *s1, char *s2)
 {
     WordDescriptor word1, word2, prev_word;
@@ -773,4 +774,96 @@ WordDescriptor findWordBeforeFirstFoundWord (char *s1, char *s2)
     }
 
     return prev_word;
+}
+
+void deleteWord(char *s, WordDescriptor w)
+{
+    if(*w.end > 0)
+    {
+        w.end++;
+        while(*w.end > 0)
+        {
+            *w.begin++ = *w.end++;
+        }
+        
+    }
+    w.begin = 0;
+}
+
+//17
+void deletePalindromeWords (char *s)
+{
+    WordDescriptor word;
+    while(getWord(s, &word) == 1)
+    {
+        if(isWordPalindrome(word))
+        {
+            deleteWord(s, word);
+        }
+    }
+}
+
+// 18
+char *addWordDiffToShorterStr (char *s1, char *s2)
+{
+    BagOfWords bag1, bag2;
+    char *s3, *end;
+    size_t amount_words;
+
+    getBagOfWords(&bag1, s1);
+    getBagOfWords(&bag2, s2);
+
+    s3 = malloc(strlen1(s1) + strlen1(s2) + 1);
+
+    if(bag1.size > bag2.size)
+    {
+        end = copyStr(s3, s2);
+
+        for(size_t i = bag1.size; i <= bag2.size; i++)
+        {
+            *end++ = ' ';
+            copy(bag2.words[i - 1].begin, bag2.words[i - 1].end, end);
+            end += bag2.words[i - 1].end - bag2.words[i - 1].begin;
+        }
+    }
+    else if (bag1.size < bag2.size)
+    {
+        end = copyStr(s3, s1);
+
+        for(size_t i = bag2.size; i <= bag1.size; i++)
+        {
+            *end++ = ' ';
+            copy(bag1.words[i - 1].begin, bag1.words[i - 1].end, end);
+            end += bag1.words[i - 1].end - bag1.words[i - 1].begin;
+        }
+    }
+    else // equal
+    {
+        end = copyStr(s3, s1);
+    }
+
+    *end = 0;
+
+    return s3;
+}
+
+// 19
+bool isLettersInWordPresentInStr (char *s, WordDescriptor word)
+{
+    getAllUniqueSortedLetters(&word);
+    bool answ = false;
+
+    while(*s > 0)
+    {
+        for(char *i = word.begin; i < word.end; i++)
+        {
+            if(*s == *i)
+            {
+                answ = true;
+                break;
+            }
+        }
+    }
+
+    return answ;
 }
